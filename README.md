@@ -11,4 +11,4 @@
 9. Task organization using tags to prioritize the tasks.
 10. To-do lists for easy task visualization.
 
-# Typical features include:
+# Features:

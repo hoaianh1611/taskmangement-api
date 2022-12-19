@@ -9,7 +9,7 @@ const taskController = {};
 //Create a Task
 taskController.createTask = async (req, res, next) => {
   const info = req.body;
-  const allowedInfo = ["title", "description"];
+  const allowedInfo = ["title", "description", "assignee"];
   try {
     //always remember to control your inputs
     if (!info || !info.title || !info.description)
@@ -21,6 +21,23 @@ taskController.createTask = async (req, res, next) => {
         throw new AppError(401, `${key} is not allowed`, "Bad Request");
       }
     });
+
+    if (info.assignee) {
+      if (!Array.isArray(info.assignee)) {
+        throw new AppError(401, `Assignee need to be an array`, "Bad Request");
+      }
+      const assignee = info.assignee;
+      for (let i = 0; i < assignee.length; i++) {
+        IdValidator(assignee[i]);
+
+        const user = await User.exists({ _id: assignee[i] });
+
+        if (!user) {
+          throw new AppError(406, "User is not exist", "Bad request");
+        }
+      }
+    }
+
     //mongoose query
     const created = await Task.create(info);
     sendResponse(
